@@ -86,6 +86,7 @@
     .secret-word:disabled{opacity:.38;cursor:default}
     .secret-slots{margin:8px 0;padding:13px;background:#0b1220;border:2px solid #43516a;border-radius:6px;color:#ffe08a;font-weight:800;font-size:18px;letter-spacing:.05em;text-align:center}
     .secret-guide{color:#e6edf6;font-size:13px;margin:0 0 6px}
+    .touch-btn.ask{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);width:auto;min-width:54px;height:46px;padding:0 10px;background:linear-gradient(145deg,#d1a02a,#8a5a0c);border:2px solid #ffe08a;color:#fff;font-size:20px;box-shadow:0 0 0 2px #3a2605,3px 3px 0 rgba(0,0,0,.5)}
     @media(max-width:1080px){.layout{grid-template-columns:1fr}.side-panel{display:grid;grid-template-columns:repeat(2,1fr)}.controls{display:none}.game-shell{max-height:none}.battle-layout,.control-dashboard{grid-template-columns:1fr}.signal-board{grid-template-columns:repeat(2,1fr)}.score-breakdown{grid-template-columns:repeat(3,1fr)}}
     @media(max-width:900px),(pointer:coarse){.touch-controls{display:flex}.interact-prompt{bottom:134px}.game-shell{touch-action:none}.modal-body,.start-card,.final-card{touch-action:pan-y;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}.mps-wrap,.week-scroll,.exception-scroll{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}.btn,.icon-btn,.signal-choice button,.lot-btn,.week-cell,.decision-card,.qty-control button{min-height:44px}}
     @media(max-width:850px){.bom-layout{grid-template-columns:1fr}.bom-parts-panel{position:static}.parts-shelf{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));max-height:300px}.bom-board{min-height:480px}.modal-foot{align-items:stretch;flex-direction:column}.modal-foot .btn{align-self:flex-end}}
@@ -159,7 +160,7 @@
           </div>
           <div class="touch-actions" aria-label="Actions">
             <button id="touchHelp" type="button" class="touch-btn help" aria-label="Open help">?</button>
-            <button id="touchCenter" type="button" class="touch-btn center" aria-label="Center map">◎</button>
+            <button id="touchCenter" type="button" class="touch-btn center" aria-label="Center map">◎</button><button id="touchAsk" type="button" class="touch-btn ask" aria-label="Preguntar a los Inges">💬</button>
             <button id="touchInteract" type="button" class="touch-btn interact" aria-label="Interact">E</button>
           </div>
         </nav>
@@ -511,7 +512,7 @@ const touchDirections=$$('[data-touch-key]');
 function releaseTouchDirections(){touchDirections.forEach(button=>{keys[button.dataset.touchKey]=false;button.classList.remove('pressed')})}
 touchDirections.forEach(button=>{const key=button.dataset.touchKey,start=e=>{e.preventDefault();if(modalOpen||dialogue||!state.running)return;button.setPointerCapture?.(e.pointerId);keys[key]=true;button.classList.add('pressed')},stop=e=>{e.preventDefault();keys[key]=false;button.classList.remove('pressed')};button.addEventListener('pointerdown',start);button.addEventListener('pointerup',stop);button.addEventListener('pointercancel',stop);button.addEventListener('lostpointercapture',stop)});
 window.addEventListener('blur',releaseTouchDirections);window.addEventListener('pointerup',e=>{if(e.pointerType==='touch'||e.pointerType==='pen')releaseTouchDirections()});
-$('#touchInteract').addEventListener('pointerdown',e=>{e.preventDefault();if(dialogue)advanceDialogue();else if(!modalOpen&&state.running)interact()});
+$('#touchInteract').addEventListener('pointerdown',e=>{e.preventDefault();if(dialogue)advanceDialogue();else if(!modalOpen&&state.running)interact()});var _tak=document.getElementById('touchAsk');if(_tak)_tak.addEventListener('pointerdown',function(ev){ev.preventDefault();if(!modalOpen&&!dialogue&&state.running&&typeof askSecret==='function')askSecret();});
 $('#touchHelp').addEventListener('pointerdown',e=>{e.preventDefault();if(!dialogue)showHelp()});
 $('#touchCenter').addEventListener('pointerdown',e=>{e.preventDefault();if(modalOpen)return;state.camera.x=clamp(state.player.x-CW/2,0,WORLD.w-CW);state.camera.y=clamp(state.player.y-CH/2,0,WORLD.h-CH);showToast('Mapa centrado.','good')});
 
